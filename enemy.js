@@ -10,11 +10,11 @@ export let enemy = {
 };
 
 export function spawnEnemy(scene){
-  const gGeo = new THREE.SphereGeometry(3,12,12);
+  const gGeo = new THREE.CapsuleGeometry(2, 8, 8, 16);
   const gMat = new THREE.MeshPhongMaterial({color:0xff4444});
   enemy.mesh = new THREE.Mesh(gGeo, gMat);
   const pos = getCellCenter(enemy.gridX, enemy.gridY);
-  enemy.mesh.position.set(pos.x, 5, pos.z);
+  enemy.mesh.position.set(pos.x, 0, pos.z);
   enemy.targetPos = pos.clone();
   scene.add(enemy.mesh);
 }
@@ -49,7 +49,7 @@ export function updateEnemy(delta, playerGrid){
     }
 
     enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
-    enemy.targetPos.y = 5;
+    enemy.targetPos.y = 0;
     enemy.moving = true;
   }
 

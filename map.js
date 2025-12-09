@@ -1,19 +1,7 @@
-export const ROWS = 30;
-export const COLS = 30;
+export const ROWS = 7;
+export const COLS = 7;
 
-export const MAP = generateRandomMaze(ROWS, COLS); /*[
-  "0000000000000",
-  "0000001000000",
-  "0011101011100",
-  "0010001000100",
-  "0010111110100",
-  "0000100010000",
-  "0110101010110",
-  "0000000000000",
-  "0011111111100",
-  "0000001000000",
-  "0000000000000"
-];*/
+export const MAP = generateRandomMaze(ROWS, COLS);
 
 export const CELL_SIZE = 10;
 
@@ -32,7 +20,7 @@ export function isCellFree(col, row){
   if(col < 0 || row < 0 || col >= COLS || row >= ROWS) return false;
   return MAP[row][col] === 0;
 }
-export function generateRandomMaze(width, height, extraConnections = 40) {
+export function generateRandomMaze(width, height, extraConnections = 10) {
   if (width % 2 === 0) width++;
   if (height % 2 === 0) height++;
 
