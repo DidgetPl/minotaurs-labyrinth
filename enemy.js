@@ -1,4 +1,4 @@
-import { COLS, ROWS, getCellCenter, isCellFree } from "./map.js";
+import { COLS, ROWS, getCellCenter, isCellFree } from "./map/map.js";
 
 export let enemy = {
   gridX: COLS - 2,

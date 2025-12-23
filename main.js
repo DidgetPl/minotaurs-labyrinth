@@ -1,9 +1,9 @@
-import { PLAYER_HEIGHT, SimplePointerLockControls } from "./controls.js";
+import { SimplePointerLockControls } from "./controls.js";
 import { enemy, spawnEnemy, updateEnemy } from "./enemy.js";
-import { CELL_SIZE, COLS, getCellCenter, MAP, MAX_WALL_H, MIN_WALL_H, ROWS } from "./map.js";
-import { MiniMap } from "./minimap.js";
+import { COLS, getCellCenter, MAP, ROWS } from "./map/map.js";
+import { MiniMap } from "./map/minimap.js";
+import { buildTerrain } from "./map/terrain.js";
 import { getMoveDirectionFromInput, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./movement.js";
-
 
 const minimap = new MiniMap(MAP);
 //const pelletsMap = [...MAP]
@@ -36,37 +36,8 @@ function init(){
   scene.add(dir);
   scene.add(new THREE.AmbientLight(0x606060));
 
-  const floorGeom = new THREE.PlaneGeometry(COLS*CELL_SIZE*3, ROWS*CELL_SIZE*3);
-  const floorMat = new THREE.MeshPhongMaterial({color:0x8BAE66});
-  const floor = new THREE.Mesh(floorGeom, floorMat);
-  floor.rotation.x = -Math.PI/2;
-  floor.position.set((COLS-1)/2*CELL_SIZE + CELL_SIZE/2 - COLS*CELL_SIZE, -PLAYER_HEIGHT, (ROWS-1)/2*CELL_SIZE + CELL_SIZE/2 - COLS*CELL_SIZE);
-  scene.add(floor);
+  buildTerrain(scene, pellets, objects);
 
-  const wallMat = new THREE.MeshPhongMaterial({color:0x517030});
-  const pelletGeom = new THREE.SphereGeometry(1.2,8,8);
-  const pelletMat = new THREE.MeshPhongMaterial({color:0xEBD5AB});
-
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const wx = c*CELL_SIZE;
-      const wz = r*CELL_SIZE;
-      if(MAP[r][c] === 1){
-        const h = MIN_WALL_H + Math.random() * (MAX_WALL_H - MIN_WALL_H);
-        const wallGeom = new THREE.BoxGeometry(CELL_SIZE, h, CELL_SIZE);
-        const wall = new THREE.Mesh(wallGeom, wallMat);
-        wall.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT, wz + CELL_SIZE/2);
-        scene.add(wall);
-        objects.push(wall);
-      } else {
-        const pellet = new THREE.Mesh(pelletGeom, pelletMat);
-        pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT, wz + CELL_SIZE/2);
-        pellet.userData = {gridX:c, gridY:r};
-        scene.add(pellet);
-        pellets.push(pellet);
-      }
-    }
-  }
   pelletCount = pellets.length;
   pelletsRemaining = pelletCount;
   scoreEl.textContent = 0;
@@ -102,8 +73,6 @@ function findFirstEmpty(){
   for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(MAP[r][c] === 0) return {x:c,y:r};
   return {x:1,y:1};
 }
-
-
 
 function updatePlayer(delta){
   if(!controls.enabled || gameOver) return;

@@ -1,4 +1,4 @@
-import { getCellCenter, isCellFree, worldToGrid } from "./map.js";
+import { getCellCenter, isCellFree, worldToGrid } from "./map/map.js";
 
 export const MOVE_SPEED = 24;
 let input = { forward:false, back:false, left:false, right:false };
