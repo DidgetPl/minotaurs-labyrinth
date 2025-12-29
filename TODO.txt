@@ -5,9 +5,11 @@
 [+] Przełomy
 [] Poprawny minotaur
 [] Inni przeciwnicy
-[] Kompas
+[+] Kompas
 [] Płomyki i pociski
-[] Poprawna mapa
+[+] Poprawna mapa
 [] Poprawna minimapa
 [] Punkty na minimapie
-[] Drobne błędy z mostami
+[] Błędy
+    [] Drobne błędy z mostami
+    [] Miejsce rozpoczęcia gry zmienić

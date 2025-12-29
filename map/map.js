@@ -91,6 +91,9 @@ export function generateRandomMaze(width, height, extraConnections = -1) {
     }
   }
 
+  const openAreaCount = Math.floor(Math.sqrt(width * height) / 6);
+  carveOpenAreas(maze, openAreaCount);
+
   return maze;
 }
 
@@ -252,4 +255,36 @@ export function cellHasBridge(x, y) {
 
 function isBetween(v, a, b) {
   return v >= Math.min(a, b) && v <= Math.max(a, b);
+}
+
+function carveOpenAreas(maze, count = 3) {
+  const height = maze.length;
+  const width = maze[0].length;
+
+  for (let i = 0; i < count; i++) {
+    const cx = 2 + Math.floor(Math.random() * (width - 4));
+    const cy = 2 + Math.floor(Math.random() * (height - 4));
+
+    const radius = 2 + Math.floor(Math.random() * 2);
+
+    for (let y = cy - radius; y <= cy + radius; y++) {
+      for (let x = cx - radius; x <= cx + radius; x++) {
+
+        if (
+          x <= 0 || y <= 0 ||
+          x >= width - 1 || y >= height - 1
+        ) continue;
+
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist > radius) continue;
+
+        if (Math.random() < 0.85) {
+          maze[y][x] = 0;
+        }
+      }
+    }
+  }
 }

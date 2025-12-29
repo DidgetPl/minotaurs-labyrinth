@@ -25,10 +25,10 @@ export function worldDirectionToAngle(dx, dy) {
 
 export function facingToAngle(facing) {
   switch (facing) {
-    case 'right': return 0;
-    case 'down':  return Math.PI / 2;
-    case 'left':  return Math.PI;
-    case 'up':    return -Math.PI / 2;
+    case 'right': return -Math.PI / 2;
+    case 'down':  return Math.PI;
+    case 'left':  return Math.PI / 2;
+    case 'up':    return 0;
   }
 }
 
@@ -40,7 +40,7 @@ export function computeCompassAngle(player, pellets) {
   const dy = target.y - player.gridY;
 
   const worldAngle = worldDirectionToAngle(dx, dy);
-  const playerAngle = facingToAngle(player.facing);
+  const playerAngle = -player.rotation.y - Math.PI/2;
 
   return worldAngle - playerAngle;
 }
@@ -55,6 +55,7 @@ export function updateCompass(player, pellets) {
   }
 
   arrow.style.display = "block";
+  arrow.style.top = "10%";
   arrow.style.transform =
-    `translateX(-50%) rotate(${angle}rad)`;
+    `rotate(${angle}rad)`;
 }

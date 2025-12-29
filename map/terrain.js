@@ -36,11 +36,13 @@ export function buildTerrain(scene, pellets, objects){
                 objects.push(wall);
             }
         } else {
-            const pellet = new THREE.Mesh(pelletGeom, pelletMat);
-            pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT + HEIGHT_MAP[r][c], wz + CELL_SIZE/2); //ZNACZNIK
-            pellet.userData = {gridX:c, gridY:r};
-            scene.add(pellet);
-            pellets.push(pellet);
+            if (MAP[r+1][c] + MAP[r-1][c] + MAP[r][c+1] + MAP[r][c-1]){
+                const pellet = new THREE.Mesh(pelletGeom, pelletMat);
+                pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT + HEIGHT_MAP[r][c], wz + CELL_SIZE/2); //ZNACZNIK
+                pellet.userData = {gridX:c, gridY:r};
+                scene.add(pellet);
+                pellets.push(pellet);
+            }
 
             //tu dodaję podłoże
             const h = HEIGHT_MAP[r][c]+1;

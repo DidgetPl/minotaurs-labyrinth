@@ -16,31 +16,14 @@ export function getPlayerData(gameObject, layer="ground"){
         position: gameObject.position,
         gridX: Math.round(gameObject.position.x / 10) - 1,
         gridY: Math.round(gameObject.position.z / 10) - 1,
-        layer: layer
+        layer: layer,
+        rotation: gameObject.rotation
     };
 }
 
-/*
-export function tryMove(dir, pos){
-  const grid = worldToGrid(pos);
-
-  let targetX = grid.x;
-  let targetY = grid.y;
-
-  if(dir === 'up') targetY -= 1;
-  if(dir === 'down') targetY += 1;
-  if(dir === 'left') targetX -= 1;
-  if(dir === 'right') targetX += 1;
-
-  if(!isCellFree(targetX, targetY)) return;
-
-  const targetWorld = getCellCenter(targetX, targetY);
-  return {dir: dir, targetPos: targetWorld};
-}*/
-
 export function tryMove(dir, player) {
-  let targetX = player.gridX;// - 1; przeniosłem to odejmowanie do getPlayerData, bo chyba tam był błąd
-  let targetY = player.gridY;// - 1;
+  let targetX = player.gridX;
+  let targetY = player.gridY;
 
   if (dir === 'up') targetY -= 1;
   if (dir === 'down') targetY += 1;
@@ -130,9 +113,7 @@ function moveSameLayer(player, targetX, targetY) {
   };
 }
 
-//cellhasbridge, getBridgeHeight
-
-function getFacingDirection(rot) {
+export function getFacingDirection(rot) {
   const yaw = rot.y;
 
   let angle = yaw % (Math.PI * 2);
