@@ -1,15 +1,14 @@
-import { CELL_SIZE, HEIGHT_MAP } from "./map.js";
+import { CELL_SIZE } from "./map.js";
 
 export function buildBridgePillar(col, row, height, scene) {
   const geo = new THREE.BoxGeometry(CELL_SIZE, height, CELL_SIZE);
   const mat = new THREE.MeshPhongMaterial({ color: 0x777777 });
 
   const mesh = new THREE.Mesh(geo, mat);
-  const baseH = HEIGHT_MAP[row][col];
 
   mesh.position.set(
     col * CELL_SIZE + CELL_SIZE / 2,
-    baseH + height / 2,
+    height / 2 - 15,
     row * CELL_SIZE + CELL_SIZE / 2
   );
 
@@ -39,6 +38,7 @@ export function buildBridgeDeck(from, to, height, scene) {
   const midX = (from.x + to.x + 1) / 2 * CELL_SIZE;
   const midZ = (from.y + to.y + 1) / 2 * CELL_SIZE;
 
-  deck.position.set(midX, height, midZ);
+  deck.position.set(midX, height-15, midZ);
   scene.add(deck);
 }
+

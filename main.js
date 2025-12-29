@@ -1,9 +1,10 @@
 import { SimplePointerLockControls } from "./controls.js";
 import { enemy, spawnEnemy, updateEnemy } from "./enemy.js";
+import { updateCompass } from "./map/compass.js";
 import { COLS, getCellCenter, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
 import { buildTerrain } from "./map/terrain.js";
-import { getMoveDirectionFromInput, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./movement.js";
+import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./movement.js";
 
 const minimap = new MiniMap(MAP);
 //const pelletsMap = [...MAP]
@@ -81,7 +82,7 @@ function updatePlayer(delta){
 
 if (!moveQueue) {
   const dir = getMoveDirectionFromInput(controls.yawObject.rotation);
-  if (dir && !moveQueue) moveQueue = tryMove(dir, controls.getObject().position);
+  if (dir && !moveQueue) moveQueue = tryMove(dir, getPlayerData(controls.getObject()));
 }
 
   if(moveQueue){
@@ -139,6 +140,7 @@ function animate(){
   minimap.render(playerTile, enemyTile);
 
   updatePlayer(delta);
+  updateCompass(getPlayerData(controls.getObject()), pellets);
   checkPelletPickup();
   updateEnemy(delta, controls.getObject().position);
   renderer.render(scene, camera);

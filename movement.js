@@ -1,15 +1,26 @@
-import { getCellCenter, isCellFree, worldToGrid } from "./map/map.js";
+import { cellHasBridge, getBridgeHeight, getCellCenter, getCellHeight, isCellFree } from "./map/map.js";
 
 export const MOVE_SPEED = 24;
 let input = { forward:false, back:false, left:false, right:false };
+let playerLayer = "ground";
 
-export function getPlayerTile(player) {
+export function getPlayerTile(playerPos) {
     return {
-        x: Math.round(player.x / 10),
-        y: Math.round(player.z / 10)
+        x: Math.round(playerPos.x / 10),
+        y: Math.round(playerPos.z / 10)
     };
 }
 
+export function getPlayerData(gameObject, layer="ground"){
+    return {
+        position: gameObject.position,
+        gridX: Math.round(gameObject.position.x / 10) - 1,
+        gridY: Math.round(gameObject.position.z / 10) - 1,
+        layer: layer
+    };
+}
+
+/*
 export function tryMove(dir, pos){
   const grid = worldToGrid(pos);
 
@@ -25,7 +36,101 @@ export function tryMove(dir, pos){
 
   const targetWorld = getCellCenter(targetX, targetY);
   return {dir: dir, targetPos: targetWorld};
+}*/
+
+export function tryMove(dir, player) {
+  let targetX = player.gridX;// - 1; przeniosłem to odejmowanie do getPlayerData, bo chyba tam był błąd
+  let targetY = player.gridY;// - 1;
+
+  if (dir === 'up') targetY -= 1;
+  if (dir === 'down') targetY += 1;
+  if (dir === 'left') targetX -= 1;
+  if (dir === 'right') targetX += 1;
+
+  if (targetX < 0 || targetY < 0) return null;
+
+  if (canStandOn(targetX, targetY, playerLayer)) {
+    return moveSameLayer(player, targetX, targetY);
+  }
+
+  if (
+    playerLayer === 'ground' &&
+    cellHasBridge(targetX, targetY)
+  ) {
+    return climbUp(player, targetX, targetY);
+  }
+
+  if (
+    playerLayer === 'bridge' &&
+    isCellFree(targetX, targetY)
+  ) {
+    return climbDown(player, targetX, targetY);
+  }
+
+  return null;
 }
+
+function canStandOn(x, y, layer) {
+  if (layer === 'ground') {
+    return isCellFree(x, y);
+  }
+
+  if (layer === 'bridge') {
+    return cellHasBridge(x, y);
+  }
+
+  return false;
+}
+
+function climbUp(player, targetX, targetY) {
+  const targetPos = getCellCenter(targetX, targetY);
+  targetPos.y = getBridgeHeight(targetX, targetY);
+
+  playerLayer = 'bridge';
+
+  return {
+    targetPos,
+    onArrive: () => {
+      player.gridX = targetX;
+      player.gridY = targetY;
+    }
+  };
+}
+
+function climbDown(player, targetX, targetY) {
+  const targetPos = getCellCenter(targetX, targetY);
+  targetPos.y = getCellHeight(targetX, targetY);
+
+  playerLayer = 'ground';
+
+  return {
+    targetPos,
+    onArrive: () => {
+      player.gridX = targetX;
+      player.gridY = targetY;
+    }
+  };
+}
+
+function moveSameLayer(player, targetX, targetY) {
+  const targetPos = getCellCenter(targetX, targetY);
+
+  if (playerLayer === 'bridge') {
+    targetPos.y = getBridgeHeight(targetX, targetY);
+  } else {
+    targetPos.y = getCellHeight(targetX, targetY);
+  }
+
+  return {
+    targetPos,
+    onArrive: () => {
+      player.gridX = targetX;
+      player.gridY = targetY;
+    }
+  };
+}
+
+//cellhasbridge, getBridgeHeight
 
 function getFacingDirection(rot) {
   const yaw = rot.y;

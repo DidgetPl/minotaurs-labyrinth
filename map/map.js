@@ -133,7 +133,8 @@ export function generateHeightMap(rows, cols) {
   return heightMap;
 }
 
-export function generateBridges(map, heightMap, count = 3) {
+export function generateBridges(map, heightMap, count = -1) {
+  if (count === -1) count = Math.sqrt(ROWS * COLS)/2
   const bridges = [];
   let attempts = 0;
 
@@ -184,9 +185,71 @@ export function generateBridges(map, heightMap, count = 3) {
     bridges.push({
       from: { x: x1, y: y1 },
       to:   { x: x2, y: y2 },
-      height: 15 + Math.random() * 10
+      height: 40 + Math.floor(Math.random() * 3) * 10
     });
   }
 
   return bridges;
+}
+
+export function getBridgeAt(col, row) {
+  return BRIDGES.find(b =>
+    (b.from.x === col && b.from.y === row) ||
+    (b.to.x === col && b.to.y === row)
+  );
+}
+
+export function getCellHeight(col, row) {
+  const bridge = getBridgeAt(col, row);
+  if (bridge) return bridge.height;
+  return HEIGHT_MAP[row][col];
+}
+
+export function getBridgeHeight(x, y) {
+  for (const bridge of BRIDGES) {
+    const { from, to, height } = bridge;
+
+    if (from.y === to.y && y === from.y) {
+      if (isBetween(x, from.x, to.x)) {
+        return height;
+      }
+    }
+
+    if (from.x === to.x && x === from.x) {
+      if (isBetween(y, from.y, to.y)) {
+        return height;
+      }
+    }
+  }
+
+  console.warn(`getBridgeHeight called for (${x}, ${y}) but no bridge found`);
+  return 0;
+}
+
+export function hasBridgeAt(x, y) {
+  for (const bridge of BRIDGES) {
+    const { from, to } = bridge;
+
+    if (from.y === to.y && y === from.y) {
+      if (isBetween(x, from.x, to.x)) {
+        return true;
+      }
+    }
+
+    if (from.x === to.x && x === from.x) {
+      if (isBetween(y, from.y, to.y)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+export function cellHasBridge(x, y) {
+  return hasBridgeAt(x, y);
+}
+
+function isBetween(v, a, b) {
+  return v >= Math.min(a, b) && v <= Math.max(a, b);
 }

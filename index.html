@@ -62,6 +62,27 @@
       font-size:18px;
       padding:8px 14px
     }
+    #compass {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    #compass-arrow {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      height: 35px;
+      background: red;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0rad);
+    }
+
   </style>
   <script src="three.min.js"></script>
 </head>
@@ -76,6 +97,10 @@
   </div>
   <div id="message"></div>
   <div id="restart"><button id="btnRestart">Spróbuj ponownie</button></div>
+  <div id="compass">
+    <div id="compass-arrow"></div>
+  </div>
+
 
 <script type="module" src="main.js"></script>
 </body>

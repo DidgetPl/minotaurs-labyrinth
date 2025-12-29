@@ -1,13 +1,13 @@
-[] Wieże
-[] Mosty
+[+] Wieże
+[+] Mosty
 [+] Pagórki
-[] Wysokość ścian
-[] Przełomy
+[+] Wysokość ścian
+[+] Przełomy
 [] Poprawny minotaur
 [] Inni przeciwnicy
 [] Kompas
-[] Płomyki
+[] Płomyki i pociski
 [] Poprawna mapa
-[] Pocisk
 [] Poprawna minimapa
 [] Punkty na minimapie
+[] Drobne błędy z mostami
