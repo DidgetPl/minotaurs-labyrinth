@@ -53,10 +53,10 @@ export class MiniMap {
         ctx.fill();
     }
 
-    drawEnemy(ex, ey) {
+    drawEnemy(ex, ey, color) {
         const ctx = this.ctx;
 
-        ctx.fillStyle = "#ff0000";
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(
             ex * this.tileSize + this.tileSize / 2,
@@ -89,10 +89,12 @@ export class MiniMap {
         }
     }
 
-    render(playerTile, enemyTile) {
+    render(playerTile, enemyTiles) {
         this.drawWalls();
         //this.drawPellets(pelletsTiles);
         this.drawPlayer(playerTile.x, playerTile.y);
-        this.drawEnemy(enemyTile.x, enemyTile.y);
+        enemyTiles.forEach(tile => {
+            this.drawEnemy(tile.x, tile.y, tile.color);
+        });
     }
 }

@@ -10,6 +10,7 @@
 [+] Poprawna mapa
 [] Poprawna minimapa
 [] Punkty na minimapie
+[] Punkty XX/DD
 [] Błędy
     [] Drobne błędy z mostami
     [] Miejsce rozpoczęcia gry zmienić

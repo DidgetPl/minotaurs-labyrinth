@@ -1,5 +1,6 @@
 import { SimplePointerLockControls } from "./controls.js";
-import { enemy, spawnEnemy, updateEnemy } from "./enemy.js";
+import { createEnemy, spawnEnemy, updateEnemy } from "./enemies/enemy.js";
+import { ENEMY_TYPES } from "./enemies/enemyTypes.js";
 import { updateCompass } from "./map/compass.js";
 import { COLS, getCellCenter, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
@@ -23,6 +24,7 @@ let message = document.getElementById('message');
 let restartDiv = document.getElementById('restart');
 let btnRestart = document.getElementById('btnRestart');
 let gameOver = false;
+let enemies = [];
 
 init();
 
@@ -45,6 +47,15 @@ function init(){
 
   controls = new SimplePointerLockControls(camera);
   scene.add(controls.getObject());
+
+
+  const minotaur = createEnemy(ENEMY_TYPES.MINOTAUR, 5, 5);
+  const boar = createEnemy(ENEMY_TYPES.BOAR, 10, 8);
+
+  spawnEnemy(scene, minotaur);
+  spawnEnemy(scene, boar);
+
+  enemies.push(minotaur, boar);
 
   const start = findFirstEmpty();
   const startWorld = getCellCenter(start.x, start.y);
@@ -106,7 +117,11 @@ if (!moveQueue) {
 
   checkPelletPickup();
 
-  if(controls.getObject().position.distanceTo(enemy.mesh.position) < 4) loseGame();
+  enemies.forEach(e => {
+    if(e.mesh)
+      if(controls.getObject().position.distanceTo(e.mesh.position) < 4)
+        loseGame();
+  });
 }
 
 function checkPelletPickup(){
@@ -128,21 +143,26 @@ function winGame(){ gameOver = true; controls.enabled = false; message.style.dis
 function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Minotaur cię złapał.'; restartDiv.style.display='block'; }
 
 
-spawnEnemy(scene);
+//spawnEnemy(scene);
 
 function animate(){
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
   const playerTile = getPlayerTile(controls.getObject().position);
-  const enemyTile = {x: enemy.gridX, y: enemy.gridY};
-  //const pelletsTiles
+  const enemyTiles = []
+  enemies.forEach(e => {
+    const txtColor = "#" + e.type.color.toString(16).padStart(6, "0");
+    enemyTiles.push({x:  e.gridX, y:  e.gridY, color: txtColor});
+  });
 
-  minimap.render(playerTile, enemyTile);
+  minimap.render(playerTile, enemyTiles);
 
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);
   checkPelletPickup();
-  updateEnemy(delta, controls.getObject().position);
+  enemies.forEach(e => {
+    updateEnemy(e, delta, getPlayerData(controls.getObject()));
+  });
   renderer.render(scene, camera);
 }
 
