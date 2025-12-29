@@ -13,13 +13,16 @@ export function createEnemy(type, x, y) {
     sightRange: type.sightRange,
 
     moving: false,
+    frozen: false,
     state: "wander",
 
     dir: null,
     stepsLeft: 0,
 
     path: [],
-    pathCooldown: 0
+    pathCooldown: 0,
+
+    freezeTimer: 0
   };
 }
 
@@ -38,49 +41,54 @@ export function spawnEnemy(scene, enemy) {
   scene.add(enemy.mesh);
 }
 
-//ZNACZNIK: updateEnemy
 export function updateEnemy(enemy, delta, player){
   if(!enemy.mesh) return;
 
-if (!enemy.moving) {
-
-const seesPlayer = canSeePlayer(enemy, player);
-
-if (seesPlayer && enemy.type.canChase) {
-  enemy.state = "chase";
-
-  enemy.pathCooldown -= delta;
-  if (enemy.path.length === 0 || enemy.pathCooldown <= 0) {
-    enemy.path = findPath(
-      { x: enemy.gridX, y: enemy.gridY },
-      { x: player.gridX, y: player.gridY }
-    ) || [];
-    enemy.pathCooldown = 0.5;
-  }
-
-  if (enemy.path.length > 0) {
-    const next = enemy.path.shift();
-    enemy.gridX = next.x;
-    enemy.gridY = next.y;
-  } else {
+  if (enemy.frozen) {
+    enemy.freezeTimer -= delta;
+    if (enemy.freezeTimer <= 0) {
+      enemy.frozen = false;
+      enemy.freezeTimer = 0;
+    }
     return;
   }
 
-} else {
-  enemy.state = "wander";
-  const step = chooseWanderDirection(enemy);
-  if (!step) return;
-  enemy.gridX += step.x;
-  enemy.gridY += step.y;
-}
+  if (!enemy.moving) {
+    const seesPlayer = canSeePlayer(enemy, player);
+
+    if (seesPlayer && enemy.type.canChase) {
+      enemy.state = "chase";
+
+      enemy.pathCooldown -= delta;
+      if (enemy.path.length === 0 || enemy.pathCooldown <= 0) {
+        enemy.path = findPath(
+          { x: enemy.gridX, y: enemy.gridY },
+          { x: player.gridX, y: player.gridY }
+        ) || [];
+        enemy.pathCooldown = 0.5;
+      }
+
+      if (enemy.path.length > 0) {
+        const next = enemy.path.shift();
+        enemy.gridX = next.x;
+        enemy.gridY = next.y;
+      } else {
+        return;
+      }
+
+    } else {
+      enemy.state = "wander";
+      const step = chooseWanderDirection(enemy);
+      if (!step) return;
+      enemy.gridX += step.x;
+      enemy.gridY += step.y;
+    }
 
 
-  enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
-  enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY);
-  enemy.moving = true;
-}
-
-
+      enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
+      enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY);
+      enemy.moving = true;
+    }
 
   if(enemy.moving){
     const dirVec = new THREE.Vector3().subVectors(enemy.targetPos, enemy.mesh.position);

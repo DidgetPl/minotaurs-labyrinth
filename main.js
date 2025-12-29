@@ -1,11 +1,12 @@
-import { SimplePointerLockControls } from "./controls.js";
 import { createEnemy, spawnEnemy, updateEnemy } from "./enemies/enemy.js";
 import { ENEMY_TYPES } from "./enemies/enemyTypes.js";
 import { updateCompass } from "./map/compass.js";
 import { COLS, getCellCenter, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
 import { buildTerrain } from "./map/terrain.js";
-import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./movement.js";
+import { SimplePointerLockControls } from "./player/controls.js";
+import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./player/movement.js";
+import { handlePlayerHit, isPlayerHit, playerState, updatePlayerState } from "./player/playerState.js";
 
 const minimap = new MiniMap(MAP);
 //const pelletsMap = [...MAP]
@@ -18,6 +19,8 @@ let pellets = [];
 let pelletCount = 0;
 let pelletsRemaining = 0;
 let scoreEl = document.getElementById('score');
+let maxPelletsEl = document.getElementById('maxPellets');
+let hpEl = document.getElementById('hp');
 let blocker = document.getElementById('blocker');
 let instructions = document.getElementById('instructions');
 let message = document.getElementById('message');
@@ -44,18 +47,22 @@ function init(){
   pelletCount = pellets.length;
   pelletsRemaining = pelletCount;
   scoreEl.textContent = 0;
+  maxPelletsEl.textContent = pellets.length;
+  hpEl.textContent = playerState.hp;
 
   controls = new SimplePointerLockControls(camera);
   scene.add(controls.getObject());
 
 
-  const minotaur = createEnemy(ENEMY_TYPES.MINOTAUR, 5, 5);
-  const boar = createEnemy(ENEMY_TYPES.BOAR, 10, 8);
+  const minotaur = createEnemy(ENEMY_TYPES.MINOTAUR, ROWS - 2, COLS - 2);
+  const boar1 = createEnemy(ENEMY_TYPES.BOAR, ROWS - Math.floor(ROWS/3), Math.floor(COLS/3));
+  const boar2 = createEnemy(ENEMY_TYPES.BOAR, Math.floor(ROWS/2), Math.floor(COLS/2));
 
   spawnEnemy(scene, minotaur);
-  spawnEnemy(scene, boar);
+  spawnEnemy(scene, boar1);
+  spawnEnemy(scene, boar2);
 
-  enemies.push(minotaur, boar);
+  enemies.push(minotaur, boar1, boar2);
 
   const start = findFirstEmpty();
   const startWorld = getCellCenter(start.x, start.y);
@@ -119,8 +126,9 @@ if (!moveQueue) {
 
   enemies.forEach(e => {
     if(e.mesh)
-      if(controls.getObject().position.distanceTo(e.mesh.position) < 4)
-        loseGame();
+        if (isPlayerHit(e, getPlayerData(controls.getObject()))) {
+          handlePlayerHit(e, playerState, hpEl);
+      }
   });
 }
 
@@ -140,7 +148,7 @@ function checkPelletPickup(){
 }
 
 function winGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Wygrałeś! Zebrano wszystkie punkty.'; restartDiv.style.display='block'; }
-function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Minotaur cię złapał.'; restartDiv.style.display='block'; }
+function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Straciłeś wszystkie życia.'; restartDiv.style.display='block'; }
 
 
 //spawnEnemy(scene);
@@ -149,16 +157,22 @@ function animate(){
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
   const playerTile = getPlayerTile(controls.getObject().position);
-  const enemyTiles = []
+  const enemyTiles = [];
   enemies.forEach(e => {
     const txtColor = "#" + e.type.color.toString(16).padStart(6, "0");
     enemyTiles.push({x:  e.gridX, y:  e.gridY, color: txtColor});
   });
+  const pelletTiles = []
+  pellets.forEach(p => {
+    pelletTiles.push({x:  Math.round(p.position.x / 10) - 1, y:  Math.round(p.position.z / 10) - 1});
+  });
 
-  minimap.render(playerTile, enemyTiles);
+  minimap.render(playerTile, enemyTiles, pelletTiles);
 
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);
+  updatePlayerState(delta);
+  if (playerState.hp <= 0) loseGame();
   checkPelletPickup();
   enemies.forEach(e => {
     updateEnemy(e, delta, getPlayerData(controls.getObject()));

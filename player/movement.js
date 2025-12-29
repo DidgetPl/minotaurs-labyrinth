@@ -1,4 +1,4 @@
-import { cellHasBridge, getBridgeHeight, getCellCenter, getCellHeight, isCellFree } from "./map/map.js";
+import { cellHasBridge, getBridgeHeight, getCellCenter, getCellHeight, isCellFree } from "../map/map.js";
 
 export const MOVE_SPEED = 24;
 let input = { forward:false, back:false, left:false, right:false };

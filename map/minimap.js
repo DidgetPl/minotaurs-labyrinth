@@ -1,100 +1,107 @@
 export class MiniMap {
-    constructor(map, tileSize = 6) {
+    constructor(map, tileSize = 20, viewSize = 13) {
         this.map = map;
         this.tileSize = tileSize;
+        this.viewSize = viewSize;
+
+        this.half = Math.floor(viewSize / 2);
 
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
-        
-        this.canvas.width = map[0].length * tileSize;
-        this.canvas.height = map.length * tileSize;
+
+        this.canvas.width = viewSize * tileSize;
+        this.canvas.height = viewSize * tileSize;
 
         this.canvas.style.position = "absolute";
         this.canvas.style.right = "20px";
         this.canvas.style.top = "20px";
-        this.canvas.style.background = "rgba(0,0,0,0.4)";
+        this.canvas.style.background = "rgba(0,0,0,0.6)";
         this.canvas.style.border = "2px solid white";
-        
+
         document.body.appendChild(this.canvas);
     }
 
-    drawWalls() {
+    drawView(px, py, enemies = [], pellets = []) {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        for (let y = 0; y < this.map.length; y++) {
-            for (let x = 0; x < this.map[0].length; x++) {
-                if (this.map[y][x] === 1) {
-                    ctx.fillStyle = "#222";
-                } else {
-                    ctx.fillStyle = "#aaa";
+        for (let vy = 0; vy < this.viewSize; vy++) {
+            for (let vx = 0; vx < this.viewSize; vx++) {
+
+                const mapX = px + vx - this.half;
+                const mapY = py + vy - this.half;
+
+                let color = "#000";
+
+                if (
+                    mapY >= 0 && mapY < this.map.length &&
+                    mapX >= 0 && mapX < this.map[0].length
+                ) {
+                    color = this.map[mapY][mapX] === 1 ? "#222" : "#aaa";
                 }
+
+                ctx.fillStyle = color;
                 ctx.fillRect(
-                    x * this.tileSize,
-                    y * this.tileSize,
+                    vx * this.tileSize,
+                    vy * this.tileSize,
                     this.tileSize,
                     this.tileSize
                 );
             }
         }
-    }
 
-    drawPlayer(px, py) {
-        const ctx = this.ctx;
+        enemies.forEach(e => {
+            const dx = e.x - px;
+            const dy = e.y - py;
+
+            if (
+                Math.abs(dx) <= this.half &&
+                Math.abs(dy) <= this.half
+            ) {
+                ctx.fillStyle = e.color;
+                ctx.beginPath();
+                ctx.arc(
+                    (dx + this.half + 0.5) * this.tileSize,
+                    (dy + this.half + 0.5) * this.tileSize,
+                    this.tileSize * 0.3,
+                    0, Math.PI * 2
+                );
+                ctx.fill();
+            }
+        });
+
+        pellets.forEach(p => {
+            const dx = p.x - px;
+            const dy = p.y - py;
+
+            if (
+                Math.abs(dx) <= this.half &&
+                Math.abs(dy) <= this.half
+            ) {
+                ctx.fillStyle = "#FFFF00";
+                ctx.beginPath();
+                ctx.arc(
+                    (dx + this.half + 0.5) * this.tileSize,
+                    (dy + this.half + 0.5) * this.tileSize,
+                    this.tileSize * 0.3,
+                    0, Math.PI * 2
+                );
+                ctx.fill();
+            }
+        });
 
         ctx.fillStyle = "#00ff00";
         ctx.beginPath();
         ctx.arc(
-            (px-1) * this.tileSize + this.tileSize / 2,
-            (py-1) * this.tileSize + this.tileSize / 2,
-            this.tileSize * 0.3,
+            (this.half + 0.5) * this.tileSize,
+            (this.half + 0.5) * this.tileSize,
+            this.tileSize * 0.35,
             0, Math.PI * 2
         );
         ctx.fill();
     }
 
-    drawEnemy(ex, ey, color) {
-        const ctx = this.ctx;
-
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(
-            ex * this.tileSize + this.tileSize / 2,
-            ey * this.tileSize + this.tileSize / 2,
-            this.tileSize * 0.3,
-            0, Math.PI * 2
-        );
-        ctx.fill();
-    }
-
-    drawPellets(pelletsTiles) {
-        const ctx = this.ctx;
-
-        ctx.fillStyle = "#ffff66";
-
-        for (let y = 0; y < this.map.length; y++) {
-            for (let x = 0; x < this.map[0].length; x++) {
-
-                if (pelletsTiles[y][x] === 2) {
-                    ctx.beginPath();
-                    ctx.arc(
-                        x * this.tileSize + this.tileSize / 2,
-                        y * this.tileSize + this.tileSize / 2,
-                        this.tileSize * 0.15,
-                        0, Math.PI * 2
-                    );
-                    ctx.fill();
-                }
-            }
-        }
-    }
-
-    render(playerTile, enemyTiles) {
-        this.drawWalls();
-        //this.drawPellets(pelletsTiles);
-        this.drawPlayer(playerTile.x, playerTile.y);
-        enemyTiles.forEach(tile => {
-            this.drawEnemy(tile.x, tile.y, tile.color);
-        });
+    render(playerTile, enemyTiles, pelletTiles) {
+        this.drawView(playerTile.x-1, playerTile.y-1, enemyTiles, pelletTiles);
     }
 }

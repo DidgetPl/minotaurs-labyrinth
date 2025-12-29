@@ -25,6 +25,13 @@
       color:#fff;
       z-index:10
     }
+    #healthpoints{
+      position:absolute;
+      left:10px;
+      top:35px;
+      color:#fff;
+      z-index:10
+    }
     #blocker{
       position:absolute;
       width:100%;
@@ -87,7 +94,8 @@
   <script src="three.min.js"></script>
 </head>
 <body>
-  <div id="overlay">Punkty: <span id="score">0</span></div>
+  <div id="overlay">Punkty: <span id="score">0</span>/<span id="maxPellets">10</span></div>
+  <div id="healthpoints">Zdrowie: <span id="hp">0</span></div>
   <div id="blocker">
     <div id="instructions">
       <div style="font-size:40px">Kliknij, by grać</div>

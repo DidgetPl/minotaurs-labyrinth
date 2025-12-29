@@ -1,4 +1,4 @@
-import { PLAYER_HEIGHT } from "../controls.js";
+import { PLAYER_HEIGHT } from "../player/controls.js";
 import { buildBridge } from "./bridges.js";
 import { BRIDGES, CELL_SIZE, COLS, HEIGHT_MAP, MAP, MAX_WALL_H, MIN_WALL_H, ROWS } from "./map.js";
 

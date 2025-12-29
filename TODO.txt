@@ -3,14 +3,18 @@
 [+] Pagórki
 [+] Wysokość ścian
 [+] Przełomy
-[] Poprawny minotaur
-[] Inni przeciwnicy
+[+] Poprawny minotaur
+[+] Inni przeciwnicy
 [+] Kompas
-[] Płomyki i pociski
+[+] Zdrowie
 [+] Poprawna mapa
-[] Poprawna minimapa
-[] Punkty na minimapie
-[] Punkty XX/DD
+[+] Poprawna minimapa
+[+] Punkty na minimapie
+[+] Punkty oo/MM
+[] Płomyki i pociski
+[] Wyższe ściany?
+[] Wygląd UI lepszy
 [] Błędy
     [] Drobne błędy z mostami
     [] Miejsce rozpoczęcia gry zmienić
+    [] Mosty się na siebie nakładają
