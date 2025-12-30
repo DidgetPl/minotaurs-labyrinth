@@ -3,12 +3,78 @@ import { cellHasBridge, getBridgeHeight, getCellCenter, getCellHeight, isCellFre
 export const MOVE_SPEED = 24;
 let input = { forward:false, back:false, left:false, right:false };
 let playerLayer = "ground";
+export let shootPressed = false;
 
 export function getPlayerTile(playerPos) {
     return {
         x: Math.round(playerPos.x / 10),
         y: Math.round(playerPos.z / 10)
     };
+}
+
+export function createProjectile(player) {
+  const dir = getFacingDirection(player.rotation);
+  const mesh = createProjectileMesh();
+
+  const dirVec = {
+    up:    { x: 0, y: -1 },
+    down:  { x: 0, y: 1 },
+    left:  { x: -1, y: 0 },
+    right: { x: 1, y: 0 }
+  }[dir];
+
+  return {
+    gridX: player.gridX,
+    gridY: player.gridY,
+    dir: dirVec,
+
+    speed: 30,
+    alive: true,
+
+    mesh: mesh
+  };
+}
+
+function createProjectileMesh() {
+  const geo = new THREE.SphereGeometry(0.8, 8, 8);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+  return new THREE.Mesh(geo, mat);
+}
+
+export function updateProjectile(p, delta, enemies) {
+  if (!p.alive) return false;
+
+  const nextX = p.gridX + p.dir.x;
+  const nextY = p.gridY + p.dir.y;
+
+  if (!isCellFree(nextX, nextY)) {
+    return true;
+  }
+
+  const hit = enemies.find(e => e.gridX === nextX && e.gridY === nextY);
+  if (hit) {
+    onProjectileHitEnemy(hit);
+    return true;
+  }
+
+  p.gridX = nextX;
+  p.gridY = nextY;
+
+  const pos = getCellCenter(p.gridX, p.gridY);
+  pos.y = getCellHeight(p.gridX, p.gridY);
+  p.mesh.position.copy(pos);
+}
+
+
+export function tryShoot(player, ammo) {
+  if (!shootPressed) return null;
+  shootPressed = false;
+
+  if (ammo <= 0) return null;
+
+  ammo--;
+
+  return createProjectile(player);
 }
 
 export function getPlayerData(gameObject, layer="ground"){
@@ -141,6 +207,9 @@ export function setupInput(){
       case 'KeyA': case 'ArrowLeft': input.left = false; break;
       case 'KeyD': case 'ArrowRight': input.right = false; break;
     }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") shootPressed = true;
   });
 }
 

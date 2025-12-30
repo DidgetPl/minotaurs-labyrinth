@@ -1,11 +1,11 @@
 import { createEnemy, spawnEnemy, updateEnemy } from "./enemies/enemy.js";
 import { ENEMY_TYPES } from "./enemies/enemyTypes.js";
 import { updateCompass } from "./map/compass.js";
-import { COLS, getCellCenter, MAP, ROWS } from "./map/map.js";
+import { COLS, getCellCenter, getCellHeight, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
 import { buildTerrain } from "./map/terrain.js";
 import { SimplePointerLockControls } from "./player/controls.js";
-import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove } from "./player/movement.js";
+import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove, tryShoot, updateProjectile } from "./player/movement.js";
 import { handlePlayerHit, isPlayerHit, playerState, updatePlayerState } from "./player/playerState.js";
 
 const minimap = new MiniMap(MAP);
@@ -21,6 +21,7 @@ let pelletsRemaining = 0;
 let scoreEl = document.getElementById('score');
 let maxPelletsEl = document.getElementById('maxPellets');
 let hpEl = document.getElementById('hp');
+let amEl = document.getElementById('am');
 let blocker = document.getElementById('blocker');
 let instructions = document.getElementById('instructions');
 let message = document.getElementById('message');
@@ -28,6 +29,7 @@ let restartDiv = document.getElementById('restart');
 let btnRestart = document.getElementById('btnRestart');
 let gameOver = false;
 let enemies = [];
+let projectiles = [];
 
 init();
 
@@ -67,7 +69,7 @@ function init(){
   const start = findFirstEmpty();
   const startWorld = getCellCenter(start.x, start.y);
   const plObj = controls.getObject();
-  plObj.position.set(startWorld.x, 0, startWorld.z);
+  plObj.position.set(startWorld.x, getCellHeight(start.x, start.y), startWorld.z);
 
   renderer = new THREE.WebGLRenderer({antialias:true, alpha: true});
   renderer.setClearColor(0x000000, 0);
@@ -138,6 +140,10 @@ function checkPelletPickup(){
     const p = pellets[i];
     const d2 = pos.distanceToSquared(p.position);
     if(d2 < 100){
+      if (p.userData.type === "ammo"){
+        playerState.ammo++;
+        amEl.textContent = playerState.ammo;
+      }
       scene.remove(p);
       pellets.splice(i,1);
       pelletsRemaining--;
@@ -146,6 +152,22 @@ function checkPelletPickup(){
     }
   }
 }
+
+export function destroyProjectile(projectile, scene) {
+  if (!projectile || !projectile.alive) return;
+
+  projectile.alive = false;
+
+  if (projectile.mesh) {
+    scene.remove(projectile.mesh);
+
+    if (projectile.mesh.geometry) projectile.mesh.geometry.dispose();
+    if (projectile.mesh.material) projectile.mesh.material.dispose();
+
+    projectile.mesh = null;
+  }
+}
+
 
 function winGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Wygrałeś! Zebrano wszystkie punkty.'; restartDiv.style.display='block'; }
 function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Straciłeś wszystkie życia.'; restartDiv.style.display='block'; }
@@ -168,6 +190,18 @@ function animate(){
   });
 
   minimap.render(playerTile, enemyTiles, pelletTiles);
+
+  let bullet = tryShoot(getPlayerData(controls.getObject()), playerState.ammo);
+  if (bullet){
+    bullet.mesh.position.set(controls.getObject().position);
+    projectiles.push(bullet.mesh);
+    scene.add(bullet.mesh);
+  }
+  projectiles.forEach(p => {
+    const shouldBeDestroyed = updateProjectile(p, delta, enemies);
+    if(shouldBeDestroyed)
+      destroyProjectile(p, scene);
+  });
 
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);

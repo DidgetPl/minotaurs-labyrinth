@@ -1,6 +1,7 @@
 export const playerState = {
   hp: 3,
   maxHp: 3,
+  ammo: 0,
 
   invulnerable: false,
   invulnTimer: 0

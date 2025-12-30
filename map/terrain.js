@@ -13,6 +13,8 @@ export function buildTerrain(scene, pellets, objects){
     const wallMat = new THREE.MeshPhongMaterial({color:0x517030});
     const pelletGeom = new THREE.SphereGeometry(1.2,8,8);
     const pelletMat = new THREE.MeshPhongMaterial({color:0xEBD5AB});
+    const ammoPelletGeom = new THREE.SphereGeometry(1.8,8,8);
+    const ammoPelletMat = new THREE.MeshPhongMaterial({color:0xEBD8EE});
     const plateMat = new THREE.MeshPhongMaterial({color:0x8BAE66});
 
     for(let r=0;r<ROWS;r++){
@@ -37,9 +39,16 @@ export function buildTerrain(scene, pellets, objects){
             }
         } else {
             if (MAP[r+1][c] + MAP[r-1][c] + MAP[r][c+1] + MAP[r][c-1]){
-                const pellet = new THREE.Mesh(pelletGeom, pelletMat);
+                let pellet;
+                let type = "normal";
+                if (Math.random() > 0.04)
+                    pellet = new THREE.Mesh(pelletGeom, pelletMat);
+                else{
+                    type = "ammo";
+                    pellet = new THREE.Mesh(ammoPelletGeom, ammoPelletMat);
+                }
                 pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT + HEIGHT_MAP[r][c], wz + CELL_SIZE/2); //ZNACZNIK
-                pellet.userData = {gridX:c, gridY:r};
+                pellet.userData = {gridX:c, gridY:r, type: type};
                 scene.add(pellet);
                 pellets.push(pellet);
             }
