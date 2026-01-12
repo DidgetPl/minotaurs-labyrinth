@@ -1,4 +1,6 @@
 import { getCellCenter, getCellHeight, isCellFree } from "../map/map.js";
+import { createBoarModel } from "./boar.js";
+import { createMinotaurModel } from "./minotaur.js";
 
 export function createEnemy(type, x, y) {
   return {
@@ -22,22 +24,30 @@ export function createEnemy(type, x, y) {
     path: [],
     pathCooldown: 0,
 
-    freezeTimer: 0
+    freezeTimer: 0,
+
+    leftLeg: null,
+    rightLeg: null,
+    leftArm: null,
+    rightArm: null,
+    headGroup: null,
+
+    time: 0,
   };
 }
 
 
 //0xff4444
 export function spawnEnemy(scene, enemy) {
-  const gGeo = new THREE.CapsuleGeometry(2, 8, 8, 16);
+  /*const gGeo = new THREE.CapsuleGeometry(2, 8, 8, 16);
   const gMat = new THREE.MeshPhongMaterial({ color: enemy.type.color });
 
-  enemy.mesh = new THREE.Mesh(gGeo, gMat);
+  enemy.mesh = new THREE.Mesh(gGeo, gMat);*/
 
+  enemy.mesh = enemy.type.name == "minotaur" ? createMinotaurModel(scene, enemy) : createBoarModel(scene, enemy);
   const pos = getCellCenter(enemy.gridX, enemy.gridY);
   enemy.mesh.position.set(pos.x, 0, pos.z);
   enemy.targetPos = pos.clone();
-
   scene.add(enemy.mesh);
 }
 
@@ -86,7 +96,13 @@ export function updateEnemy(enemy, delta, player){
 
 
       enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
-      enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY);
+      enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY) - (enemy.type.name == "minotaur" ? 10 : 10);
+
+      enemy.moveDir = new THREE.Vector3()
+        .subVectors(enemy.targetPos, enemy.mesh.position)
+        .setY(0)
+        .normalize();
+
       enemy.moving = true;
     }
 
@@ -106,6 +122,12 @@ export function updateEnemy(enemy, delta, player){
         enemy.mesh.position.add(dirVec.multiplyScalar(step));
       }
     }
+
+    if (enemy.moveDir) {
+      const angle = Math.atan2(enemy.moveDir.x, enemy.moveDir.z);
+      enemy.mesh.rotation.y = angle;
+    }
+
   }
 }
 

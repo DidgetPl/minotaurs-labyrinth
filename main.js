@@ -1,5 +1,7 @@
+import { updateBoarAnimation } from "./enemies/boar.js";
 import { createEnemy, spawnEnemy, updateEnemy } from "./enemies/enemy.js";
 import { ENEMY_TYPES } from "./enemies/enemyTypes.js";
+import { updateMinotaurAnimation } from "./enemies/minotaur.js";
 import { updateCompass } from "./map/compass.js";
 import { COLS, getCellCenter, getCellHeight, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
@@ -183,6 +185,13 @@ function animate(){
   enemies.forEach(e => {
     const txtColor = "#" + e.type.color.toString(16).padStart(6, "0");
     enemyTiles.push({x:  e.gridX, y:  e.gridY, color: txtColor});
+
+    switch(e.type.name){
+      case "minotaur":
+        updateMinotaurAnimation(e, renderer, scene, camera);
+      case "boar":
+        updateBoarAnimation(e, renderer, scene, camera);
+    }
   });
   const pelletTiles = []
   pellets.forEach(p => {

@@ -6,7 +6,8 @@ export const ENEMY_TYPES = {
     damage: 3,
     canChase: true,
     color: 0xaa0000,
-    freezesOnHit: false
+    freezesOnHit: false,
+    animationSpeed: 0.02
   },
 
   BOAR: {
@@ -16,6 +17,7 @@ export const ENEMY_TYPES = {
     damage: 1,
     canChase: false,
     color: 0x775533,
-    freezesOnHit: true
+    freezesOnHit: true,
+    animationSpeed: 0.1
   }
 };

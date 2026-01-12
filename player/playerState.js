@@ -41,5 +41,6 @@ export function handlePlayerHit(enemy, ps, hpEl) {
 }
 
 export function isPlayerHit(enemy, player) {
-  return player.position.distanceTo(enemy.mesh.position) < 4;
+  let shift = (enemy.type.name == "minotaur") ? 10 : 10;
+  return player.position.distanceTo(enemy.mesh.position) < 4 + shift;
 }

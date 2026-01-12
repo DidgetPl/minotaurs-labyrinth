@@ -50,15 +50,15 @@ export class MiniMap {
             }
         }
 
-        enemies.forEach(e => {
-            const dx = e.x - px;
-            const dy = e.y - py;
+        pellets.forEach(p => {
+            const dx = p.x - px;
+            const dy = p.y - py;
 
             if (
                 Math.abs(dx) <= this.half &&
                 Math.abs(dy) <= this.half
             ) {
-                ctx.fillStyle = e.color;
+                ctx.fillStyle = "#FFFF00";
                 ctx.beginPath();
                 ctx.arc(
                     (dx + this.half + 0.5) * this.tileSize,
@@ -70,15 +70,15 @@ export class MiniMap {
             }
         });
 
-        pellets.forEach(p => {
-            const dx = p.x - px;
-            const dy = p.y - py;
+        enemies.forEach(e => {
+            const dx = e.x - px;
+            const dy = e.y - py;
 
             if (
                 Math.abs(dx) <= this.half &&
                 Math.abs(dy) <= this.half
             ) {
-                ctx.fillStyle = "#FFFF00";
+                ctx.fillStyle = e.color;
                 ctx.beginPath();
                 ctx.arc(
                     (dx + this.half + 0.5) * this.tileSize,
