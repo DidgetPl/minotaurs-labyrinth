@@ -62,8 +62,15 @@ function init(){
   enemies.push(minotaur);
 
   for (let i = 0; i < 5; i++){
-    const x = Math.floor(Math.random() * (ROWS-5)) + 5;
-    const y = Math.floor(Math.random() * (COLS-5)) + 5;
+    let x = 0;
+    let y = 0;
+    let steps = 0;
+    while (x < 5 && y < 5 && steps < 100){
+      x = Math.floor(Math.random() * (ROWS));
+      y = Math.floor(Math.random() * (COLS));
+      steps++;
+    }
+
     const boar = createEnemy(ENEMY_TYPES.BOAR, x, y);
     spawnEnemy(scene, boar);
     enemies.push(boar);
