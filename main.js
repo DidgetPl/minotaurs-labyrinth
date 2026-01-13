@@ -187,7 +187,7 @@ function winGame(){
   restartDiv.style.display='block';
 }
 
-function loseGame(){ 
+function loseGame(){
   gameOver = true;
   controls.enabled = false;
   message.style.display='block';
