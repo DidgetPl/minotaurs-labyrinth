@@ -55,13 +55,15 @@ export function createBoarModel(scene, enemy) {
 }
 
 export function updateBoarAnimation(enemy, renderer, scene, camera) {
-    enemy.time += enemy.type.animationSpeed;
+    if (!enemy.frozen){
+      enemy.time += enemy.type.animationSpeed;
 
-    enemy.headGroup.rotation.y = Math.sin(enemy.time) * 0.1;
-    enemy.leftArm.rotation.x = Math.sin(enemy.time) * 0.4;
-    enemy.rightArm.rotation.x = -Math.sin(enemy.time ) * 0.4;
-    enemy.rightLeg.rotation.x = Math.sin(enemy.time) * 0.4;
-    enemy.leftLeg.rotation.x = -Math.sin(enemy.time ) * 0.4;
+      enemy.headGroup.rotation.y = Math.sin(enemy.time) * 0.1;
+      enemy.leftArm.rotation.x = Math.sin(enemy.time) * 0.4;
+      enemy.rightArm.rotation.x = -Math.sin(enemy.time ) * 0.4;
+      enemy.rightLeg.rotation.x = Math.sin(enemy.time) * 0.4;
+      enemy.leftLeg.rotation.x = -Math.sin(enemy.time ) * 0.4;
+    }
 
     renderer.render(scene, camera);
 }

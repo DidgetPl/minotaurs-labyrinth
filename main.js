@@ -7,7 +7,7 @@ import { COLS, getCellCenter, getCellHeight, MAP, ROWS } from "./map/map.js";
 import { MiniMap } from "./map/minimap.js";
 import { buildTerrain } from "./map/terrain.js";
 import { SimplePointerLockControls } from "./player/controls.js";
-import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove, tryShoot, updateProjectile } from "./player/movement.js";
+import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, setupInput, tryMove, tryShoot } from "./player/movement.js";
 import { handlePlayerHit, isPlayerHit, playerState, updatePlayerState } from "./player/playerState.js";
 
 const minimap = new MiniMap(MAP);
@@ -59,14 +59,16 @@ function init(){
 
 
   const minotaur = createEnemy(ENEMY_TYPES.MINOTAUR, ROWS - 2, COLS - 2);
-  const boar1 = createEnemy(ENEMY_TYPES.BOAR, ROWS - Math.floor(ROWS/3), Math.floor(COLS/3));
-  const boar2 = createEnemy(ENEMY_TYPES.BOAR, Math.floor(ROWS/2), Math.floor(COLS/2));
-
   spawnEnemy(scene, minotaur);
-  spawnEnemy(scene, boar1);
-  spawnEnemy(scene, boar2);
+  enemies.push(minotaur);
 
-  enemies.push(minotaur, boar1, boar2);
+  for (let i = 0; i < 5; i++){
+    const x = Math.floor(Math.random() * (ROWS-5)) + 5;
+    const y = Math.floor(Math.random() * (COLS-5)) + 5;
+    const boar = createEnemy(ENEMY_TYPES.BOAR, x, y);
+    spawnEnemy(scene, boar);
+    enemies.push(boar);
+  }
 
   const start = findFirstEmpty();
   const startWorld = getCellCenter(start.x, start.y);
@@ -200,8 +202,8 @@ function animate(){
 
   minimap.render(playerTile, enemyTiles, pelletTiles);
 
-  let bullet = tryShoot(getPlayerData(controls.getObject()), playerState.ammo);
-  if (bullet){
+  /*let bullet = */tryShoot(getPlayerData(controls.getObject()), enemies, playerState.ammo, scene);
+  /*if (bullet){
     bullet.mesh.position.set(controls.getObject().position);
     projectiles.push(bullet.mesh);
     scene.add(bullet.mesh);
@@ -211,7 +213,7 @@ function animate(){
     if(shouldBeDestroyed)
       destroyProjectile(p, scene);
   });
-
+  */
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);
   updatePlayerState(delta);

@@ -36,14 +36,7 @@ export function createEnemy(type, x, y) {
   };
 }
 
-
-//0xff4444
 export function spawnEnemy(scene, enemy) {
-  /*const gGeo = new THREE.CapsuleGeometry(2, 8, 8, 16);
-  const gMat = new THREE.MeshPhongMaterial({ color: enemy.type.color });
-
-  enemy.mesh = new THREE.Mesh(gGeo, gMat);*/
-
   enemy.mesh = enemy.type.name == "minotaur" ? createMinotaurModel(scene, enemy) : createBoarModel(scene, enemy);
   const pos = getCellCenter(enemy.gridX, enemy.gridY);
   enemy.mesh.position.set(pos.x, 0, pos.z);
@@ -94,7 +87,6 @@ export function updateEnemy(enemy, delta, player){
       enemy.gridY += step.y;
     }
 
-
       enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
       enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY) - (enemy.type.name == "minotaur" ? 10 : 10);
 
@@ -127,7 +119,6 @@ export function updateEnemy(enemy, delta, player){
       const angle = Math.atan2(enemy.moveDir.x, enemy.moveDir.z);
       enemy.mesh.rotation.y = angle;
     }
-
   }
 }
 

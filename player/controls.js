@@ -31,10 +31,7 @@ export class SimplePointerLockControls {
 
   getObject(){ return this.yawObject; }
 
-  // musi być wywoływane, nawet jeśli nic nie robi
-  update(delta){
-    // na przyszłość
-  }
+  update(delta){}
 
   getDirection(v){
     v = v || new THREE.Vector3();

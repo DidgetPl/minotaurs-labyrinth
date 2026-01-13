@@ -66,16 +66,63 @@ export function updateProjectile(p, delta, enemies) {
 }
 
 
-export function tryShoot(player, ammo) {
+export function tryShoot(player, enemies, ammo, scene) {
   if (!shootPressed) return null;
   shootPressed = false;
 
   if (ammo <= 0) return null;
-
   ammo--;
 
-  return createProjectile(player);
+  const hitEnemy = shootHitscan(player, enemies);
+
+  if (hitEnemy) {
+  console.log("ENEMI?");
+    onProjectileHitEnemy(hitEnemy, enemies, scene);
+  }
+  return ammo;
 }
+
+function onProjectileHitEnemy(enemy, enemies, scene){
+  if (enemy.type.name == "minotaur"){
+    enemy.frozen = true;
+    enemy.freezeTimer = 3;
+  }
+  else{
+    if (enemy.mesh)
+      scene.remove(enemy.mesh);
+
+    const index = enemies.indexOf(enemy);
+    if (index !== -1)
+      enemies.splice(index, 1);
+
+    enemy.mesh = null;
+  }
+}
+
+export function shootHitscan(player, enemies, maxRange = 20) {
+  const dir = getFacingDirection(player.rotation);
+  const v = dirToVec(dir);
+
+  let x = player.gridX;
+  let y = player.gridY;
+
+  for (let i = 0; i < maxRange; i++) {
+    x += v.x;
+    y += v.y;
+
+    if (!isCellFree(x, y)) {
+      return null;
+    }
+
+    const enemy = enemies.find(e => e.gridX === x && e.gridY === y);
+    if (enemy) {
+      return enemy;
+    }
+  }
+
+  return null;
+}
+
 
 export function getPlayerData(gameObject, layer="ground"){
     return {
@@ -209,7 +256,9 @@ export function setupInput(){
     }
   });
   document.addEventListener("keydown", e => {
-    if (e.code === "Space") shootPressed = true;
+    if (e.code === "Space"){
+      shootPressed = true;
+    } 
   });
 }
 
@@ -243,4 +292,13 @@ export function getMoveDirectionFromInput(rot) {
   }
 
   return null;
+}
+
+function dirToVec(dir) {
+    switch (dir) {
+    case 'up':    return { x: 1, y: 0 };
+    case 'down':  return { x: -1, y: 0 };
+    case 'left':  return { x: 0, y: 1 };
+    case 'right': return { x: 0, y: -1 };
+  }
 }

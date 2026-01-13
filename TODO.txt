@@ -11,17 +11,16 @@
 [+] Poprawna minimapa
 [+] Punkty na minimapie
 [+] Punkty oo/MM
-[] Płomyki i pociski
+[+] Płomyki i pociski
 [] Wyższe ściany?
 [] Wygląd UI lepszy
 [+] Wygląd Minotaura i dzików lepszy.
     [+] Skala
     [+] Obrót
     [+] Dziki
-[] Błędy
-    [] Balans: Więcej dzików?
-    [] Drobne błędy z mostami
-    [] Miejsce rozpoczęcia gry zmienić
-    [] Mosty się na siebie nakładają
-    [] Za pelletami nie widać przeciwników (na mapie)
+[+] Błędy
+    [+] Balans: Więcej dzików?
+    [+] Drobne błędy z mostami
+    [+] Miejsce rozpoczęcia gry zmienić
+    [+] Za pelletami nie widać przeciwników (na mapie)
     [+] Czemu nagle nie tracę życia? [Problem może leżeć w tym, że tak ich chamsko przesunąłem]

@@ -82,13 +82,15 @@ export function createMinotaurModel(scene, enemy){
 }
 
 export function updateMinotaurAnimation(enemy, renderer, scene, camera) {
-    enemy.time += enemy.type.animationSpeed;
+    if (!enemy.frozen){
+        enemy.time += enemy.type.animationSpeed;
 
-    enemy.headGroup.rotation.y = Math.sin(enemy.time) * 0.3;
-    enemy.leftArm.rotation.x = Math.sin(enemy.time) * 0.8;
-    enemy.rightArm.rotation.x = -Math.sin(enemy.time ) * 0.8;
-    enemy.rightLeg.rotation.x = Math.sin(enemy.time) * 0.3;
-    enemy.leftLeg.rotation.x = -Math.sin(enemy.time ) * 0.3;
+        enemy.headGroup.rotation.y = Math.sin(enemy.time) * 0.3;
+        enemy.leftArm.rotation.x = Math.sin(enemy.time) * 0.8;
+        enemy.rightArm.rotation.x = -Math.sin(enemy.time ) * 0.8;
+        enemy.rightLeg.rotation.x = Math.sin(enemy.time) * 0.3;
+        enemy.leftLeg.rotation.x = -Math.sin(enemy.time ) * 0.3;
+    }
 
     renderer.render(scene, camera);
 }
