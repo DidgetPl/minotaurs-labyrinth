@@ -106,14 +106,14 @@ export function generateHeightMap(rows, cols) {
     Array.from({ length: cols }, () => 0)
   );
 
-  const hillCount = Math.floor((rows * cols) / 80); // ilość pagórków
+  const hillCount = Math.floor((rows * cols) / 80);
 
   for (let i = 0; i < hillCount; i++) {
     const cx = Math.floor(Math.random() * cols);
     const cy = Math.floor(Math.random() * rows);
 
-    const radius = 4 + Math.random() * 5;   // wielkość pagórka
-    const height = 4 + Math.random() * 10;  // wysokość pagórka
+    const radius = 4 + Math.random() * 5;
+    const height = 4 + Math.random() * 10;
 
     for (let y = Math.floor(cy - radius); y <= cy + radius; y++) {
       for (let x = Math.floor(cx - radius); x <= cx + radius; x++) {
@@ -125,7 +125,7 @@ export function generateHeightMap(rows, cols) {
 
         if (dist > radius) continue;
 
-        const t = 1 - dist / radius;     // 1 w środku, 0 na brzegu
+        const t = 1 - dist / radius;
         const smooth = smoothStep(t);
 
         heightMap[y][x] += smooth * height;

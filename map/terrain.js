@@ -3,13 +3,6 @@ import { buildBridge } from "./bridges.js";
 import { BRIDGES, CELL_SIZE, COLS, HEIGHT_MAP, MAP, MAX_WALL_H, MIN_WALL_H, ROWS } from "./map.js";
 
 export function buildTerrain(scene, pellets, objects){
-    /*const floorGeom = new THREE.PlaneGeometry(COLS*CELL_SIZE*3, ROWS*CELL_SIZE*3);
-    const floorMat = new THREE.MeshPhongMaterial({color:0x8BAE66});
-    const floor = new THREE.Mesh(floorGeom, floorMat);
-    floor.rotation.x = -Math.PI/2;
-    floor.position.set((COLS-1)/2*CELL_SIZE + CELL_SIZE/2 - COLS*CELL_SIZE*0.5, -PLAYER_HEIGHT, (ROWS-1)/2*CELL_SIZE + CELL_SIZE/2 - COLS*CELL_SIZE*0.5);
-    scene.add(floor);*/
-
     const wallMat = new THREE.MeshPhongMaterial({color:0x517030});
     const pelletGeom = new THREE.SphereGeometry(1.2,8,8);
     const pelletMat = new THREE.MeshPhongMaterial({color:0xEBD5AB});
@@ -33,7 +26,7 @@ export function buildTerrain(scene, pellets, objects){
                 const wallGeom = new THREE.BoxGeometry(CELL_SIZE, h, CELL_SIZE);
                 const wall = new THREE.Mesh(wallGeom, wallMat);
 
-                wall.position.set(wx + CELL_SIZE/2, h/2 - 12, wz + CELL_SIZE/2); //ZNACZNIK
+                wall.position.set(wx + CELL_SIZE/2, h/2 - 12, wz + CELL_SIZE/2);
                 scene.add(wall);
                 objects.push(wall);
             }
@@ -47,17 +40,16 @@ export function buildTerrain(scene, pellets, objects){
                     type = "ammo";
                     pellet = new THREE.Mesh(ammoPelletGeom, ammoPelletMat);
                 }
-                pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT + HEIGHT_MAP[r][c], wz + CELL_SIZE/2); //ZNACZNIK
+                pellet.position.set(wx + CELL_SIZE/2, 2-PLAYER_HEIGHT + HEIGHT_MAP[r][c], wz + CELL_SIZE/2);
                 pellet.userData = {gridX:c, gridY:r, type: type};
                 scene.add(pellet);
                 pellets.push(pellet);
             }
 
-            //tu dodaję podłoże
             const h = HEIGHT_MAP[r][c]+1;
             const plateGeom = new THREE.BoxGeometry(CELL_SIZE, h, CELL_SIZE);
             const plate = new THREE.Mesh(plateGeom, plateMat);
-            plate.position.set(wx + CELL_SIZE/2, h/2 - 13, wz + CELL_SIZE/2); //ZNACZNIK
+            plate.position.set(wx + CELL_SIZE/2, h/2 - 13, wz + CELL_SIZE/2);
             scene.add(plate);
             objects.push(plate);
         }

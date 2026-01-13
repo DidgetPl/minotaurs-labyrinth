@@ -6,7 +6,7 @@ export function createMinotaurModel(scene, enemy){
     scene.add(minotaur);
 
     const torso = new THREE.Mesh(
-        new THREE.BoxGeometry(1.5, 2, 0.8), //
+        new THREE.BoxGeometry(1.5, 2, 0.8),
         bodyMat
     );
     torso.position.y = 1.5;

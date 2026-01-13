@@ -11,7 +11,6 @@ import { getMoveDirectionFromInput, getPlayerData, getPlayerTile, MOVE_SPEED, se
 import { handlePlayerHit, isPlayerHit, playerState, updatePlayerState } from "./player/playerState.js";
 
 const minimap = new MiniMap(MAP);
-//const pelletsMap = [...MAP]
 
 let moveQueue = null;
 
@@ -177,8 +176,6 @@ function winGame(){ gameOver = true; controls.enabled = false; message.style.dis
 function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Straciłeś wszystkie życia.'; restartDiv.style.display='block'; }
 
 
-//spawnEnemy(scene);
-
 function animate(){
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
@@ -202,18 +199,8 @@ function animate(){
 
   minimap.render(playerTile, enemyTiles, pelletTiles);
 
-  /*let bullet = */tryShoot(getPlayerData(controls.getObject()), enemies, playerState.ammo, scene);
-  /*if (bullet){
-    bullet.mesh.position.set(controls.getObject().position);
-    projectiles.push(bullet.mesh);
-    scene.add(bullet.mesh);
-  }
-  projectiles.forEach(p => {
-    const shouldBeDestroyed = updateProjectile(p, delta, enemies);
-    if(shouldBeDestroyed)
-      destroyProjectile(p, scene);
-  });
-  */
+  tryShoot(getPlayerData(controls.getObject()), enemies, playerState.ammo, scene);
+
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);
   updatePlayerState(delta);
