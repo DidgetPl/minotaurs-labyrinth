@@ -66,20 +66,20 @@ export function updateProjectile(p, delta, enemies) {
 }
 
 
-export function tryShoot(player, enemies, ammo, scene) {
+export function tryShoot(player, enemies, playerState, scene, amEl) {
   if (!shootPressed) return null;
   shootPressed = false;
 
-  if (ammo <= 0) return null;
-  ammo--;
+  if (playerState.ammo <= 0) return null;
+  playerState.ammo--;
+  amEl.textContent = playerState.ammo;
 
   const hitEnemy = shootHitscan(player, enemies);
 
   if (hitEnemy) {
-  console.log("ENEMI?");
     onProjectileHitEnemy(hitEnemy, enemies, scene);
   }
-  return ammo;
+  return playerState.ammo;
 }
 
 function onProjectileHitEnemy(enemy, enemies, scene){

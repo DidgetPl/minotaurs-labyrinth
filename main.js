@@ -206,7 +206,7 @@ function animate(){
 
   minimap.render(playerTile, enemyTiles, pelletTiles);
 
-  tryShoot(getPlayerData(controls.getObject()), enemies, playerState.ammo, scene);
+  tryShoot(getPlayerData(controls.getObject()), enemies, playerState, scene, amEl);
 
   updatePlayer(delta);
   updateCompass(getPlayerData(controls.getObject()), pellets);
