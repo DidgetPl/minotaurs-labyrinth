@@ -88,7 +88,7 @@ export function updateEnemy(enemy, delta, player){
     }
 
       enemy.targetPos = getCellCenter(enemy.gridX, enemy.gridY);
-      enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY) - (enemy.type.name == "minotaur" ? 10 : 10);
+      enemy.targetPos.y = getCellHeight(enemy.gridX, enemy.gridY) - 10;
 
       enemy.moveDir = new THREE.Vector3()
         .subVectors(enemy.targetPos, enemy.mesh.position)
