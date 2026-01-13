@@ -179,9 +179,21 @@ export function destroyProjectile(projectile, scene) {
 }
 
 
-function winGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Wygrałeś! Zebrano wszystkie punkty.'; restartDiv.style.display='block'; }
-function loseGame(){ gameOver = true; controls.enabled = false; message.style.display='block'; message.innerHTML = 'Przegrałeś! Straciłeś wszystkie życia.'; restartDiv.style.display='block'; }
+function winGame(){
+  gameOver = true;
+  controls.enabled = false;
+  message.style.display='block';
+  message.innerHTML = 'Wygrałeś! Zebrano wszystkie punkty.';
+  restartDiv.style.display='block';
+}
 
+function loseGame(){ 
+  gameOver = true;
+  controls.enabled = false;
+  message.style.display='block';
+  message.innerHTML = 'Przegrałeś! Straciłeś wszystkie życia.';
+  restartDiv.style.display='block';
+}
 
 function animate(){
   requestAnimationFrame(animate);
